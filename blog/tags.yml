@@ -1,19 +1,19 @@
-facebook:
-  label: Facebook
-  permalink: /facebook
-  description: Facebook tag description
+news:
+  label: News
+  permalink: /news
+  description: News from ColibriProject
 
-hello:
-  label: Hello
-  permalink: /hello
-  description: Hello tag description
+tutorial:
+  label: Tutorial
+  permalink: /tutorial
+  description: Tutorials from ColibriProject
 
-docusaurus:
-  label: Docusaurus
-  permalink: /docusaurus
-  description: Docusaurus tag description
+golang:
+  label: Golang
+  permalink: /golang
+  description: Go
 
-hola:
-  label: Hola
-  permalink: /hola
-  description: Hola tag description
+version:
+  label: Version
+  permalink: /version
+  description: Versions

@@ -2,46 +2,31 @@
 sidebar_position: 1
 ---
 
-# Tutorial Intro
+# Introdução
 
-Let's discover **Docusaurus in less than 5 minutes**.
+Colibri é um framework para Golang criado para trazer agilidade para os desenvolvedores, para que eles foquem em desenvolver soluções e não precisem se preocupar com configurações iniciais dos serviços de nuvem AWS e GCP.
 
-## Getting Started
+## Começando
 
-Get started by **creating a new site**.
+Para iniciar um projeto, temos duas formas:
+1. Criar um novo projeto diretamente do gerador do Colibri Project.
+2. Incluir a dependência no seu projeto Go criado anteriormente.
 
-Or **try Docusaurus immediately** with **[docusaurus.new](https://docusaurus.new)**.
+### O que você precisa
 
-### What you'll need
+Para utilizar todo ferramental disponibilizado pelo Colibri Project, você vai precisar:
+- [Go 1.24+](https://go.dev/dl/)
+- [Docker](https://docs.docker.com/get-started/get-docker/)
+- Make (opcional)
 
-- [Node.js](https://nodejs.org/en/download/) version 18.0 or above:
-  - When installing Node.js, you are recommended to check all checkboxes related to dependencies.
+## Criando novo projeto pelo starter
 
-## Generate a new site
+Acessar o site [colibri-project.dev.br](https://colibriproject.dev.br) criar seu projeto pelo starter e sair codificando.
 
-Generate a new Docusaurus site using the **classic template**.
+## Adicionando o colibri-sdk-go no seu projeto
 
-The classic template will automatically be added to your project after you run the command:
+Para projetos que já existem, também é fácil adicionar o Colibri, basta 
 
-```bash
-npm init docusaurus@latest my-website classic
+```shell
+go get -u github.com/colibriproject-dev/colibri-sdk-go
 ```
-
-You can type this command into Command Prompt, Powershell, Terminal, or any other integrated terminal of your code editor.
-
-The command also installs all necessary dependencies you need to run Docusaurus.
-
-## Start your site
-
-Run the development server:
-
-```bash
-cd my-website
-npm run start
-```
-
-The `cd` command changes the directory you're working with. In order to work with your newly created Docusaurus site, you'll need to navigate the terminal there.
-
-The `npm run start` command builds your website locally and serves it through a development server, ready for you to view at http://localhost:3000/.
-
-Open `docs/intro.md` (this page) and edit some lines: the site **reloads automatically** and displays your changes.
