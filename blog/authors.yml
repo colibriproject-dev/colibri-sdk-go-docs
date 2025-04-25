@@ -1,23 +1,19 @@
-yangshun:
-  name: Yangshun Tay
-  title: Front End Engineer @ Facebook
-  url: https://github.com/yangshun
-  image_url: https://github.com/yangshun.png
+arkanjoms:
+  name: Rafael Ramos de Oliveira
+  title: Colibri project dev
+  url: https://github.com/arkanjoms
+  image_url: https://github.com/arkanjoms.png
   page: true
   socials:
-    x: yangshunz
-    github: yangshun
+    github: arkanjoms
+    linkedin: rafaelramosoliveira
 
-slorber:
-  name: Sébastien Lorber
-  title: Docusaurus maintainer
-  url: https://sebastienlorber.com
-  image_url: https://github.com/slorber.png
-  page:
-    # customize the url of the author page at /blog/authors/<permalink>
-    permalink: '/all-sebastien-lorber-articles'
+dantasrafael:
+  name: Rafael Dantas
+  title: Colibri project dev
+  url: https://github.com/dantasrafael
+  image_url: https://github.com/dantasrafael.png
+  page: true
   socials:
-    x: sebastienlorber
-    linkedin: sebastienlorber
-    github: slorber
-    newsletter: https://thisweekinreact.com
+    github: dantasrafael
+    linkedin: rafael-dantas-a0ab7248
