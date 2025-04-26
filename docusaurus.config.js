@@ -22,8 +22,8 @@ const config = {
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: 'colibriproject-dev', // Usually your GitHub org/user name.
-  projectName: 'colibri-sdk-go-docs', // Usually your repo name.
+  organizationName: 'colibriproject-dev',
+  projectName: 'colibri-sdk-go-docs',
   deploymentBranch: 'gh-pages',
 
   onBrokenLinks: 'throw',
@@ -114,6 +114,10 @@ const config = {
               {
                 label: 'Site',
                 href: 'https://colibriproject.dev.br',
+              },
+              {
+                label: 'Discord',
+                href: 'https://discord.gg/6NmFsYFf',
               },
             ],
           },
