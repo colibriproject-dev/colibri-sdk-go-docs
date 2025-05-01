@@ -1,0 +1,86 @@
+---
+sidebar_position: 3
+title: Adicionando em um projeto existente
+---
+
+Para configurar o projeto **colibri-sdk-go** em um projeto existente, é necessário fazer algumas configurações manuais para que tudo funciona perfeitamente
+
+## Adicionar dependência
+
+```shell
+go get github.com/colibriproject-dev/colibri-sdk-go
+```
+
+## Definir variáveis de ambiente
+
+Existem algumas variáveis de ambiente mínimas dnecessárias para configuração do `colibri-sdk-go` que sao listadas abaixo
+
+```dotenv showLineNumbers
+ENVIRONMENT=development
+APP_NAME=my-awesome-go-project
+APP_TYPE=service
+CLOUD=gcp
+```
+
+Na linha `1` definimos a variável `ENVIRONMENT` que define qual ambiente estamos executando o projeto, ela aceita os valores:
+* **development**: Ambiente de desenvolvimento local, quando definica prepara algumas configurações para execução local, como formatação dos logs.
+* **sandbox**: Ambiente de validação do projeto.
+* **test**: é definido quando estamos executando os testes unitários ou de integração.
+* **production**: Ambiente de produção onde o serviço está sendo executado.
+
+Por padrão, o `colibri-sdk-go` carrega as variáveis de ambientes definidas no arquivo `.env` disponível na raiz de execução do projeto.
+
+## Configurar arquivo `main.go`
+
+```go showLineNumbers
+package main
+
+import (
+	"github.com/colibriproject-dev/colibri-sdk-go"
+	"github.com/colibriproject-dev/colibri-sdk-go/pkg/web/restserver"
+)
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.ListenAndServe()
+}
+```
+
+Na linha `9` inicializamos o `colibri-sdk-go`, nesse passo é onde as variáveis de ambiente serão carregadas e as definições básicas do projeto serão feitas.
+Na linha `13` inicializados o serviço web, por padrão é utilizada a porta `8080`, mas essa configuração pode ser alterada através da variável de ambiente `PORT`.
+
+## Executando o projeto
+
+Após realizar as configurações, podemos iniciar o projeto através do comando:
+
+```shell
+go run main.go
+```
+
+Se tudo foi configurado corretamente, um log será apresetando como abaixo
+
+```shell
+
+      .   _            _ _ _          _
+     { \/'o;===       | (_) |        (_)
+.----'-/'-/  ___  ___ | |_| |__  _ __ _
+ '-..-| /   / __ / _ \| | | '_ \| '__| |
+    /\/\   | (__| (_) | | | |_) | |  | |
+    '--'    \___ \___/|_|_|_.__/|_|  |_|
+            project
+
+# my-awesome-go-project #
+
+{"time":"2025-05-01T18:00:56.707132641-03:00","level":"INFO","msg":"Initializing GCP","caller":"cloud.Initialize"}
+{"time":"2025-05-01T18:00:56.70717939-03:00","level":"INFO","msg":"Cloud provider connected","caller":"cloud.Initialize"}
+{"time":"2025-05-01T18:00:56.707335553-03:00","level":"INFO","msg":"Registered route [    GET] /health","caller":"restserver.fiberWebServer.injectRoutes"}
+{"time":"2025-05-01T18:00:56.707347852-03:00","level":"INFO","msg":"Registered route [    GET] /api-docs","caller":"restserver.fiberWebServer.injectRoutes"}
+{"time":"2025-05-01T18:00:56.707352964-03:00","level":"INFO","msg":"Service 'WEB-REST' running in 8080 port","caller":"restserver.ListenAndServe"}
+```
+
+Com isso seu projeto está apto a evoluir, parabéns.
+
+___

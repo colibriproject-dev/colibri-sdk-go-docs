@@ -8,5 +8,6 @@ Para utilizar todo ferramental disponibilizado pelo Colibri Project, você vai p
 - [Go 1.24+](https://go.dev/dl/)
 - [Docker](https://docs.docker.com/get-started/get-docker/)
 - Make (opcional)
+- IDE de sua preferência.
 
 ___
