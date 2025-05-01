@@ -4,6 +4,7 @@ title: Instalação
 ---
 
 Para iniciar um projeto, temos duas formas:
+
 1. Criar um novo projeto diretamente do gerador do Colibri Project.
 2. Incluir a dependência no seu projeto Go criado anteriormente.
 
@@ -16,7 +17,7 @@ Acessar o site [colibri-project.dev.br](https://colibriproject.dev.br) criar seu
 Para adicionar o colibri-sdk-go no seu projeto, basta executar o comando abaixo:
 
 ```shell
-go get -u github.com/colibriproject-dev/colibri-sdk-go
+go get github.com/colibriproject-dev/colibri-sdk-go
 ```
 
 ___
