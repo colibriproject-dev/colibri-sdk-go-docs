@@ -55,15 +55,15 @@ func main() {
 
 A struct `Route` aceita os seguintes atributos
 
-* **URI** Especifica o caminho ou o endpoint para a rota HTTP.
-* **Method** Especifica o método HTTP (como GET, POST) associado à rota.
-* **Prefix** Define um prefixo comum para as rotas. Aceita os valores:
+* **URI (Obrigatório)** Especifica o caminho ou o endpoint para a rota HTTP.
+* **Method (Obrigatório)** Especifica o método HTTP (como GET, POST) associado à rota.
+* **Prefix (Obrigatório)** Define um prefixo comum para as rotas. Aceita os valores:
     * `PublicApi`: `/public/`
     * `PrivateApi`: `/private/`
     * `AuthenticatedApi`: `/api/`
     * `NoPrefix`: `/`
-* **Function** Especifica qual função handler executar quando a rota é acessada.
-* **BeforeEnter** É uma função executada antes de entrar na função handler da rota.
+* **Function (Obrigatório)** Especifica qual função handler executar quando a rota é acessada.
+* **BeforeEnter (Não obrigatório)** É uma função executada antes de entrar na função handler da rota.
 
 ### BeforeEnter
 
