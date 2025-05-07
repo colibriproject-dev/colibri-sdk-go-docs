@@ -131,8 +131,8 @@ Sistema de retry configurável que:
 ## Tipos de Dados
 
 O cliente utiliza interfaces genéricas para dados de requisição e resposta:
-- : Interface para dados de requisição `RequestData`
-- : Interface para dados de resposta de sucesso `ResponseSuccessData`
-- : Interface para dados de resposta de erro `ResponseErrorData`
+- `RequestData`: Interface para dados de requisição.
+- `ResponseSuccessData`: Interface para dados de resposta de sucesso.
+- `ResponseErrorData`: Interface para dados de resposta de erro.
 
 Este design permite forte tipagem e flexibilidade ao mesmo tempo.
