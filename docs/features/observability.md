@@ -9,12 +9,9 @@ Este pacote fornece uma camada completa de observabilidade para aplicações, in
 
 ### 1. Inicialização
 
-``` go
-// Inicialização do monitoramento
-monitoring.Initialize()
-```
+A configuração é realizada automaticamente ao iniciar o `colibri-sdk-go`.
 
-A inicialização configura automaticamente:
+São configurados os seguintes componentes:
 - Conexão com [NewRelic](https://newrelic.com/) e [OpenTelemetry](https://opentelemetry.io/)
 - Configuração de métricas padrão
 
