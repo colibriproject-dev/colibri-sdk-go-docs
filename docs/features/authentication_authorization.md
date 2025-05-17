@@ -164,6 +164,3 @@ func (s *Service) ProcessarOperação(ctx context.Context, dados *Dados) error {
     - Mantenha isolamento rígido entre dados de diferentes tenants
 
 ___
-Esta documentação fornece uma visão completa do sistema de contexto de autenticação, permitindo implementar funcionalidades seguras e com isolamento multi-tenant em aplicações Go.
-
-___

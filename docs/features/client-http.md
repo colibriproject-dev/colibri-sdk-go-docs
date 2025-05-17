@@ -136,3 +136,5 @@ O cliente utiliza interfaces genéricas para dados de requisição e resposta:
 - `ResponseErrorData`: Interface para dados de resposta de erro.
 
 Este design permite forte tipagem e flexibilidade ao mesmo tempo.
+
+___

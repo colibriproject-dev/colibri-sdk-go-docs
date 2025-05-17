@@ -202,3 +202,5 @@ Este design permite:
     - Invalide caches relacionados juntos
     - Use nomes de cache consistentes
     - Documente os TTLs utilizados
+
+___

@@ -115,6 +115,4 @@ func (s *Service) ChamarAPIExterna(ctx context.Context) error {
     - Não log dados sensíveis
     - Respeite as leis de proteção de dados
 
-Esta documentação fornece uma visão abrangente da feature de observabilidade, permitindo monitoramento efetivo e troubleshooting de aplicações em produção.
-
 ___

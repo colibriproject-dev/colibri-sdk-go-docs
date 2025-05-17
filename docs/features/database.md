@@ -225,3 +225,5 @@ resultados, err := NewPageQuery[Pedido](
     time.Now().AddDate(0, -1, 0),
 ).Execute()
 ```
+
+___
