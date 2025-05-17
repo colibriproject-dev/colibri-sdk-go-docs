@@ -174,3 +174,5 @@ func (p *ProcessadorAutenticado) Consume(ctx context.Context, msg *ProviderMessa
     - Use para testes de integração `TestProducer`
     - Simule falhas de processamento
     - Verifique timeout e retry
+
+___
