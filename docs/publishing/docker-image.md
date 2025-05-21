@@ -119,6 +119,6 @@ Agora você tem uma imagem Docker otimizada para sua API web!
 
 Esta abordagem usando multi-stage build garante que a imagem final seja pequena e segura, contendo apenas os componentes necessários para executar a aplicação.
 
-O uso do como imagem base para o segundo estágio proporciona uma superfície de ataque reduzida, pois esta imagem contém apenas o essencial para executar a aplicação, sem shell ou utilitários adicionais que poderiam ser explorados por atacantes. `distroless`
+O uso da imagem base `gcr.io/distroless/static` para o segundo estágio proporciona uma superfície de ataque reduzida, pois esta imagem contém apenas o essencial para executar a aplicação, sem shell ou utilitários adicionais que poderiam ser explorados por atacantes.
 
 ___
