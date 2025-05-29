@@ -22,11 +22,20 @@ APP_TYPE=service
 CLOUD=gcp
 ```
 
-Na linha `1` definimos a variável `ENVIRONMENT` que define qual ambiente estamos executando o projeto, ela aceita os valores:
-* **development**: Ambiente de desenvolvimento local, quando definica prepara algumas configurações para execução local, como formatação dos logs.
-* **sandbox**: Ambiente de validação do projeto.
-* **test**: é definido quando estamos executando os testes unitários ou de integração.
-* **production**: Ambiente de produção onde o serviço está sendo executado.
+1. Na linha `1` definimos a variável `ENVIRONMENT` que define qual ambiente estamos executando o projeto, ela aceita os valores:
+    * **development**: Ambiente de desenvolvimento local, quando definica prepara algumas configurações para execução local, como formatação dos logs.
+    * **sandbox**: Ambiente de validação do projeto.
+    * **test**: é definido quando estamos executando os testes unitários ou de integração.
+    * **production**: Ambiente de produção onde o serviço está sendo executado.
+2. Na linha `2` definimos a variável `APP_NAME` que define o nome da aplicação que será utilizada na identificação dos logs e monitorameto.
+3. Na linha `3` definimos a variável `APP_TYPE` que define o tipo da aplicação, ela aceita os valores:
+    * **service**: Padrão para deploy de microsserviços.
+    * **serverless**: Padrão para deploy de cloud functions/lambdas.
+    * **cli**: Padrão para criação de aplicações de linha de comando.
+4. Na linha `4` definimos a variável `CLOUD` que define qual cloud provider estamos utilizando, ela aceita os valores:
+    * **aws**: Configura ambiente da AWS.
+    * **gcp**: Configura ambiente do GCP.
+    * **none**: Utilizado para aplicações de linha de comando.
 
 Por padrão, o `colibri-sdk-go` carrega as variáveis de ambientes definidas no arquivo `.env` disponível na raiz de execução do projeto.
 
