@@ -26,7 +26,7 @@ config := &RestClientConfig{
     Timeout:             30,
     Retries:             3,
     RetrySleepInSeconds: 2,
-	ProxyURL:            "http://proxy.example.com:8080",
+    ProxyURL:            "http://proxy.example.com:8080",
 }
 
 client := NewRestClient(config)
