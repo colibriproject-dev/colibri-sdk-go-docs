@@ -18,7 +18,7 @@ cacheDB.Initialize()
 
 Características da inicialização:
 - Conexão automática com [Redis](https://redis.io).
-- Integração com [NewRelic](https://newrelic.com/)/[OpenTelemetry](https://opentelemetry.io/) para monitoramento.
+- Integração com [OpenTelemetry](https://opentelemetry.io/) para monitoramento.
 
 Variáveis de ambiente necessárias:
 - `CACHE_URI`: host do banco de dados.
@@ -90,7 +90,7 @@ pedidoCache := NewCache[Pedido]("pedidos", 30 * time.Minute)
 
 ### 2. Observabilidade
 
-- Monitoramento via [NewRelic](https://newrelic.com/)/[OpenTelemetry](https://opentelemetry.io/).
+- Monitoramento via [OpenTelemetry](https://opentelemetry.io/).
 - Logging estruturado de operações.
 - Rastreamento de erros.
 

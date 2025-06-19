@@ -3,7 +3,7 @@ sidebar_position: 7
 title: Observabilidade
 ---
 
-Este pacote fornece uma camada completa de observabilidade para aplicações, integrando métricas, tracing e logging. São encapsuladas duas versões, uma com [NewRelic](https://newrelic.com/) e outra com [OpenTelemetry](https://opentelemetry.io/), oferecendo recursos para monitoramento de transações, segmentos e erros.
+Este pacote fornece uma camada completa de observabilidade para aplicações, integrando métricas, tracing e logging. É encapsulada a implementação com [OpenTelemetry](https://opentelemetry.io/), oferecendo recursos para monitoramento de transações, segmentos e erros.
 
 ## Componentes Principais
 
@@ -12,16 +12,8 @@ Este pacote fornece uma camada completa de observabilidade para aplicações, in
 A configuração é realizada automaticamente ao iniciar o `colibri-sdk-go`.
 
 São configurados os seguintes componentes:
-- Conexão com [NewRelic](https://newrelic.com/) e [OpenTelemetry](https://opentelemetry.io/)
+- Conexão [OpenTelemetry](https://opentelemetry.io/)
 - Configuração de métricas padrão
-
-#### Utilizando New Relic
-
-Para utilizar o New Relic, basta adicionar a variável de ambiente:
-
-```dotenv showLineNumber
-NEW_RELIC_LICENSE=XXXXXXXXXXXXXXXXXXXXXXXXXXXXX
-```
 
 #### Utilizando OpenTelemetry
 

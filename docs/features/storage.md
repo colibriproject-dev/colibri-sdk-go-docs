@@ -60,7 +60,7 @@ err := storage.DeleteFile(
 
 ### 2. Observabilidade
 - 
-- Integração com [NewRelic](https://newrelic.com/)/[OpenTelemetry](https://opentelemetry.io/)
+- Integração com [OpenTelemetry](https://opentelemetry.io/)
 - Monitoramento de transações
 - Logging estruturado
 
