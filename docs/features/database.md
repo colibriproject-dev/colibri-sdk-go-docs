@@ -156,7 +156,7 @@ usuario, err := NewQuery[User](ctx,
 ```
 
 ### 2. Observabilidade
-- Integração com [NewRelic](https://newrelic.com/)/[OpenTelemetry](https://opentelemetry.io/) para monitoramento
+- Integração com [OpenTelemetry](https://opentelemetry.io/) para monitoramento
 - Logging estruturado de operações
 - Rastreamento de transações
 

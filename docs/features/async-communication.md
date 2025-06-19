@@ -79,7 +79,7 @@ Abstração dos provedores de nuvem abaixo:
 
 ### 2. Observabilidade
 
-- Integração com [NewRelic](https://newrelic.com/)/[OpenTelemetry](https://opentelemetry.io/)
+- Integração com [OpenTelemetry](https://opentelemetry.io/)
 - Logging estruturado
 - Rastreamento de mensagens
 
