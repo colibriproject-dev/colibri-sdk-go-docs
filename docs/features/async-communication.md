@@ -148,6 +148,19 @@ func (p *ProcessadorAutenticado) Consume(ctx context.Context, msg *ProviderMessa
 }
 ```
 
+## Utilizando RabbitMQ
+
+Para utilizar o RabbitMQ é necessário realizar passar algumas variáveis de ambiente adicionais:
+
+- `USE_RABBITMQ`: Aceita os valores `true` ou `false`, por padrão é definido como `false`.
+- `RABBITMQ_URL`: URL para acessar o serviço do RabbitMQ no formato `amqp://guest:guest@localhost:5672/`
+
+Ao se utilizar o RabbitMQ, filas de `DLQ` são criadas automaticamente para as mensagens com erro sejam encaminhadas para elas.
+
+> Por padrão ao definir o RabbitMQ como broker padrão para utilização, é ignorado os demais serviços como `SNS/SQS` e `PubSub`.
+
+
+
 ## Boas Práticas
 
 1. **Nomenclatura de Tópicos/Filas**:
