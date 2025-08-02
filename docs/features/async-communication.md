@@ -159,7 +159,47 @@ Ao se utilizar o RabbitMQ, filas de `DLQ` são criadas automaticamente para as m
 
 > Por padrão ao definir o RabbitMQ como broker padrão para utilização, é ignorado os demais serviços como `SNS/SQS` e `PubSub`.
 
+### Definindo um consumidor para filas com RabbitMQ
 
+Para se utilizar o RabbitMQ no consumo de filas é necessário implementar a interface `QueueConsumerConfig` que tem um método `Config() *QueueConfiguration`.
+
+Exemplo de implemantação:
+
+```go showLineNumbers
+package consumers
+
+import (
+	"context"
+	"github.com/colibriproject-dev/colibri-sdk-go/pkg/messaging"
+)
+
+type MessageConsumer struct {
+}
+
+func (c *MessageConsumer) QueueName() string {
+	return "message.created.app1"
+}
+
+func (c *MessageConsumer) Consume(ctx context.Context, msg *messaging.ProviderMessage) error {
+	var data Message
+	if err := msg.DecodeAndValidateMessage(&data); err != nil {
+		return err
+	}
+
+	// Processamento da mensagem
+
+	return nil
+}
+
+func (c *MessageConsumer) Config() *messaging.QueueConfiguration {
+	return &messaging.QueueConfiguration{
+		TopicName: "message.created",
+	}
+}
+
+```
+
+Na linha 28 do exemplo acima, é definido o atributo `TopicName` que será utilizado para vincular a `queue` na exchange correta do RabbitMQ.
 
 ## Boas Práticas
 
