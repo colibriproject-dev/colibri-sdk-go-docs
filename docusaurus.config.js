@@ -81,6 +81,10 @@ const config = {
             label: 'GitHub',
             position: 'right',
           },
+          {
+            type: 'docsVersionDropdown',
+            versions: ['current', '0.1.4'],
+          },
         ],
       },
       footer: {
