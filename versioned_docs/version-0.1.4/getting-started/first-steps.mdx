@@ -1,0 +1,58 @@
+---
+sidebar_position: 4
+title: Primeiros passos
+---
+
+## Criando sua primeira rota
+
+Para adicionar um novo endpoint para o serviço, primeiramente devemos criar um slice do tipo `[]Route`, definindo alguns atributos.
+
+```go showLineNumbers
+
+type Awesome struct {
+	Greeting string `json:"greeting"`
+}
+
+var awesomeRoutes = []restserver.Route{
+	{
+		URI:    "awesome",
+		Method: "GET",
+		Prefix: restserver.NoPrefix,
+		Function: func(ctx restserver.WebContext) {
+			body := Awesome{Greeting: "My Awesome Colibri Project"}
+			ctx.JsonResponse(200, &body)
+		},
+	},
+}
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.AddRoutes(awesomeRoutes)
+
+	restserver.ListenAndServe()
+}
+```
+
+1. Na linha `6`, criamos a nossa estrutura básica com as definições das rotas que serão adicionadas.
+2. Nas linhas `7-15`, incluímos um objeto com as definições básicas, definindos os seguintes atributos:
+    1. `URI`: nome do recurso que será montado, no exemplo, será criada uma rota `http://localhost:8080/awesome`
+    2. `Method`: método http que será utilizado para registrar a rota.
+    3. `Prefix`: prefixo da rota, no exemplo ficou sem prefixo. Temos também prefixo para rotas autenticadas e públicas.
+    4. `Function`: função que será executada nas chamadas da rota.
+3. Na linha `23` fazemos a inclusão das rotas no nosso serviço web utilizando o método `AddRoutes`.
+
+Após realizarmos todos os passos corretamente, podemos iniciar o serviço e fazer uma chamada para testar a rota com o comando abaixo:
+```shell
+ curl -X GET http://localhost:8080/awesome
+```
+
+Com isso teremos o resultado abaixo:
+```json showLineNumbers
+{
+  "greeting": "My Awesome Colibri Project"
+}
+```
+___
