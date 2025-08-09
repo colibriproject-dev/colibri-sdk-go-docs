@@ -83,7 +83,7 @@ const config = {
           },
           {
             type: 'docsVersionDropdown',
-            versions: ['current', '0.1.4'],
+            versions: ['current', '0.1.5', '0.1.4'],
           },
         ],
       },
