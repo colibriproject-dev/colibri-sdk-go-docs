@@ -5,6 +5,8 @@ title: Comunicação assíncona
 
 Este pacote implementa um sistema de mensageria assíncrona com suporte para múltiplos provedores (AWS SNS/SQS e Google Cloud Pub/Sub), com recursos de produção e consumo de mensagens, observabilidade e tratamento de erros.
 
+> Para utilizar o mecanismo de comunicação assíncrona, é necessário criar toda a estrutura de tópics e filas previamente.
+
 ## Componentes Principais
 
 ### 1. Inicialização
