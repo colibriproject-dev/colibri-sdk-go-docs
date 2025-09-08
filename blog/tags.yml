@@ -17,3 +17,18 @@ version:
   label: Version
   permalink: /version
   description: Versions
+
+observability:
+  label: Observability
+  permalink: /observability
+  description: Observability
+
+opentelemetry:
+  label: OpenTelemetry
+  permalink: /opentelemetry
+  description: OpenTelemetry
+
+tracing:
+  label: Tracing
+  permalink: /tracing
+  description: Tracing
