@@ -1,0 +1,116 @@
+---
+sidebar_position: 1
+title: Web server
+---
+
+O projeto `colibri-sdk-go` fornece uma abstração de um container web, `por baixo do capô` utilizamos o [fiber](https://github.com/gofiber/fiber), mas ele pode ser facilmente trocado implementando um novo container, na pasta `pkg/web/restserver`.
+
+Com isso criamos uma camada independente de serviço, como exemplo, o próprio `colibri-sdk-go` nasceu em cima de uma implementação do [gorilla/mux](https://github.com/gorilla/mux), sendo trocado sua base durante suas versões anteriores mantendo a compatibilidade dos projetos que utilizavam `colibri-sdk-go`.
+
+Para utilizar o projeto, devemos primeiramente configurar a variável de ambiente `PORT`, por padrão é utilizada a porta `8080`.
+
+Após isso precisamos adicionar o código `restserver.ListenAndServe()` como última instrução da função `main`.
+
+```go showLineNumbers
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.ListenAndServe()
+}
+```
+
+## Rotas
+
+Para se registrar rotas, utilizamos a instrução `restserver.AddRoutes` passando como parâmetro um slice `[]restserver.Route`, essa instrução pode ser executada mais de uma vez como no exemplo abaixo.
+
+```go showLineNumbers
+var awesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+var moreAwesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.AddRoutes(awesomeRoutes)
+	restserver.AddRoutes(moreAwesomeRoutes)
+
+	restserver.ListenAndServe()
+}
+```
+
+### `Route` attributes
+
+A struct `Route` aceita os seguintes atributos
+
+* **URI (Obrigatório)** Especifica o caminho ou o endpoint para a rota HTTP.
+* **Method (Obrigatório)** Especifica o método HTTP (como GET, POST) associado à rota.
+* **Prefix (Obrigatório)** Define um prefixo comum para as rotas. Aceita os valores:
+    * `PublicApi`: `/public/`
+    * `PrivateApi`: `/private/`
+    * `AuthenticatedApi`: `/api/`
+    * `NoPrefix`: `/`
+* **Function (Obrigatório)** Especifica qual função handler executar quando a rota é acessada.
+* **BeforeEnter (Não obrigatório)** É uma função executada antes de entrar na função handler da rota.
+
+### BeforeEnter
+
+Para definir uma função middleware que será executada antes de chamar a função handler da rota, basta passar uma função como do exemplo abaixo na definição da rota.
+
+```go showLineNumbers
+func beforeEnterExample(ctx WebContext) *MiddlewareError {
+	// validation code, return "*MiddlewareError" for errors
+	return nil // success
+}
+
+
+var awesomeRoutes = []restserver.Route{
+    {
+        URI:    "user",
+        Method: http.MethodGet,
+        Function: func(ctx WebContext) {
+            ctx.JsonResponse(http.StatusOK, &Resp{Msg: "user get"})
+        },
+        Prefix:      AuthenticatedApi,
+        BeforeEnter: beforeEnterExample,
+    },
+}
+```
+
+## Middlewares globais
+
+Para adicionar middlewares globais, criamos uma implementação da interface abaixo e registramos a mesma na função `main` com o comando `restserver.Use(&MyCustomMiddleware{})`, onde `MyCustomMiddleware` implementa a internface `CustomMiddleware`.
+
+```go showLineNumbers
+type CustomMiddleware interface {
+	Apply(ctx WebContext) *MiddlewareError
+}
+```
+
+## Rotas autenticadas
+
+Por padrão, todas as rotas com o prefixo `AuthenticatedApi` utilizam o middleware de autenticação que valida se existe um token JWT no header `Authorization` da request.
+
+### Middleware de autenticação customizado
+
+Para substituir o middleware padrão, pode-se criar uma implementação para a interface `CustomAuthenticationMiddleware` e registrar a mesma na função `main` com a instrução `restserver.CustomAuthMiddleware(&middlewares.MyCustomAutheMiddleware{})`
+
+```go showLineNumbers
+type CustomAuthenticationMiddleware interface {
+	Apply(ctx WebContext) (*security.AuthenticationContext, error)
+}
+```
+
+___

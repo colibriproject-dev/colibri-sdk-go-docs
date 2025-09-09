@@ -1,0 +1,8 @@
+{
+  "label": "Começando",
+  "position": 2,
+  "link": {
+    "type": "generated-index",
+    "description": "Iniciando seu projeto com colibri-sdk-go"
+  }
+}
