@@ -5,17 +5,14 @@ authors: [arkanjoms]
 tags: [observability, opentelemetry, golang]
 ---
 
-import useBaseUrl from '@docusaurus/useBaseUrl';
-
-Visão geral
-===========
+Aprenda, em minutos, a instrumentar seus serviços Go com colibri-sdk-go e OpenTelemetry. Suba o stack com docker-compose, configure as variáveis de ambiente e visualize seus traces no Jaeger — com exemplos práticos, módulos reais e dicas de melhores práticas para observabilidade de ponta a ponta.
 
 <!-- truncate -->
 
-Este post demonstra como habilitar e explorar monitoramento tracing em um projeto Golang que utiliza o SDK colibri-sdk-go. Usaremos o stack OpenTelemetry (OTel) com Collector, Prometheus e um visualizador de traces (por exemplo, Jaeger ou Tempo/Grafana). O repositório de exemplo possui dois módulos (school-module e finantial-module) e um ambiente docker-compose para facilitar a execução local.
-
 Estrutura do exemplo
 --------------------
+
+- [github](https://github.com/colibriproject-dev/colibri-sdk-go-examples)
 
 - Módulos de exemplo:
   - school-module
@@ -35,23 +32,27 @@ Pré‑requisitos
 Como subir o ambiente de observabilidade
 ----------------------------------------
 
-O projeto já fornece um docker-compose com os serviços necessários prontos para uso.
+O projeto de exemplo já fornece um docker-compose com os serviços necessários prontos para uso.
 
-1. Compile os projetos com o comando:
+1. Faça o clone do repositório
+```shell
+git clone https://github.com/colibriproject-dev/colibri-sdk-go-examples.git
+````
+2. Compile os projetos com o comando:
 ```shell
 make build
 ```
-2. Suba os serviços de infraestrutura com o comando:
+3. Suba os serviços de infraestrutura com o comando:
 ```shell
 make start
 ```
-3. Acesse o Jeager na url http://localhost:16686/
+4. Acesse o Jeager na url http://localhost:16686/
 
 Configuração OpenTelemetry no SDK
 ---------------------------------
 
 O SDK colibri-sdk-go já inclui integração com OTel. Veja o arquivo:
-- pkg/base/monitoring/colibri-otel/open_telemetry.go (no repo colibri-sdk-go)
+- [pkg/base/monitoring/colibri-otel/open_telemetry.go (no repo colibri-sdk-go)](https://github.com/colibriproject-dev/colibri-sdk-go/blob/master/pkg/base/monitoring/colibri-otel/open_telemetry.go)
 
 Os módulos de exemplo consomem essa configuração. Ao iniciar cada serviço, o SDK inicializa o provedor de traces e exportadores conforme as variáveis de ambiente.
 
