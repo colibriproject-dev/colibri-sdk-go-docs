@@ -3,13 +3,13 @@ sidebar_position: 1
 title: Web server
 ---
 
-O projeto `colibri-sdk-go` fornece uma abstração de um container web, `por baixo do capô` utilizamos o [fiber](https://github.com/gofiber/fiber), mas ele pode ser facilmente trocado implementando um novo container, na pasta `pkg/web/restserver`.
+O pacote `colibri-sdk-go` fornece uma abstração de um servidor web. "Por baixo do capô", utilizamos o [Fiber](https://github.com/gofiber/fiber), mas ele pode ser facilmente substituído através da implementação de um novo container no pacote `pkg/web/restserver`.
 
-Com isso criamos uma camada independente de serviço, como exemplo, o próprio `colibri-sdk-go` nasceu em cima de uma implementação do [gorilla/mux](https://github.com/gorilla/mux), sendo trocado sua base durante suas versões anteriores mantendo a compatibilidade dos projetos que utilizavam `colibri-sdk-go`.
+Isso cria uma camada de serviço independente. Como exemplo, o `colibri-sdk-go` utilizava originalmente uma implementação baseada no [gorilla/mux](https://github.com/gorilla/mux), que foi substituída em versões posteriores mantendo a compatibilidade total com os projetos existentes.
 
-Para utilizar o projeto, devemos primeiramente configurar a variável de ambiente `PORT`, por padrão é utilizada a porta `8080`.
+Para utilizar o servidor, devemos configurar a variável de ambiente `PORT` (o padrão é `8080`).
 
-Após isso precisamos adicionar o código `restserver.ListenAndServe()` como última instrução da função `main`.
+Após as configurações, adicionamos a instrução `restserver.ListenAndServe()` como a última linha da função `main`.
 
 ```go showLineNumbers
 
@@ -24,7 +24,7 @@ func main() {
 
 ## Rotas
 
-Para se registrar rotas, utilizamos a instrução `restserver.AddRoutes` passando como parâmetro um slice `[]restserver.Route`, essa instrução pode ser executada mais de uma vez como no exemplo abaixo.
+Para registrar rotas, utilizamos a função `restserver.AddRoutes`, passando um *slice* de `[]restserver.Route`. Essa instrução pode ser executada múltiplas vezes, conforme o exemplo abaixo:
 
 ```go showLineNumbers
 var awesomeRoutes = []restserver.Route{
@@ -51,9 +51,9 @@ func main() {
 }
 ```
 
-### `Route` attributes
+### Atributos da `Route`
 
-A struct `Route` aceita os seguintes atributos
+A *struct* `Route` aceita os seguintes atributos:
 
 * **URI (Obrigatório)** Especifica o caminho ou o endpoint para a rota HTTP.
 * **Method (Obrigatório)** Especifica o método HTTP (como GET, POST) associado à rota.
@@ -67,7 +67,7 @@ A struct `Route` aceita os seguintes atributos
 
 ### BeforeEnter
 
-Para definir uma função middleware que será executada antes de chamar a função handler da rota, basta passar uma função como do exemplo abaixo na definição da rota.
+Para definir uma função *middleware* que será executada antes de chamar a função *handler* da rota, basta passar uma função na definição da rota, conforme o exemplo abaixo:
 
 ```go showLineNumbers
 func beforeEnterExample(ctx WebContext) *MiddlewareError {

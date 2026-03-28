@@ -3,68 +3,74 @@ sidebar_position: 2
 title: Cliente HTTP
 ---
 
-O `RestClient` é uma estrutura em Go que fornece uma interface robusta para fazer requisições HTTP. Ele inclui recursos como circuit breaker, retry de requisições, cache, e suporte para diferentes tipos de requisições HTTP incluindo multipart/form-data.
+O `RestClient` fornece uma interface robusta e simplificada para a realização de requisições HTTP em Go. Ele encapsula funcionalidades essenciais para microsserviços modernos, como *circuit breaker*, estratégias de *retry*, suporte a *cache* e manuseio de diferentes tipos de conteúdo, incluindo `multipart/form-data`.
 
-## Estrutura
-``` go
+## Estrutura Principal
+
+Abaixo, a definição da estrutura do `RestClient`:
+
+```go showLineNumbers
 type RestClient struct {
-    name       string                         // Nome do cliente REST
+    name       string                         // Nome identificador do cliente
     baseURL    string                         // URL base para todas as requisições
-    retries    uint8                          // Número de tentativas de retry
-    retrySleep uint                           // Tempo de espera entre retries (em segundos)
-    client     *http.Client                   // Cliente HTTP
-    cb         *circuitbreaker.CircuitBreaker // Circuit breaker
+    retries    uint8                          // Número máximo de tentativas (retry)
+    retrySleep uint                           // Tempo de espera entre tentativas (segundos)
+    client     *http.Client                   // Cliente HTTP nativo do Go
+    cb         *circuitbreaker.CircuitBreaker // Instância de Circuit Breaker
 }
 ```
-## Configuração
-Para criar uma instância do `RestClient`, utilize a função `NewRestClient`, passando as opções como no exemplo abaixo: 
 
-``` go showLineNumbers
+## Configuração e Instalação
+
+Para criar uma instância do `RestClient`, utilize a função `NewRestClient` com uma estrutura de configuração:
+
+```go showLineNumbers
 config := &RestClientConfig{
-    Name:                "meu-cliente",
+    Name:                "meu-servico-cliente",
     BaseURL:             "http://api.exemplo.com",
     Timeout:             30,
     Retries:             3,
     RetrySleepInSeconds: 2,
-    ProxyURL:            "http://proxy.example.com:8080",
+    ProxyURL:            "http://proxy.exemplo.com:8080", // Opcional
 }
 
 client := NewRestClient(config)
 ```
 
-## Principais Funcionalidades
+## Funcionalidades Principais
 
-### 1. Requisições HTTP
+### 1. Requisições Padronizadas
 
-O cliente suporta todos os métodos HTTP padrão (GET, POST, PUT, PATCH, DELETE, etc) através da estrutura : `Request`
+O cliente utiliza tipos genéricos para facilitar o mapeamento automático de respostas de sucesso e erro.
 
-``` go showLineNumbers
-// Exemplo de GET
-response := Request[MinhaResponseStruct, ErrorStruct]{
-    Ctx:        context.Background(),
+```go showLineNumbers
+// Exemplo de requisição GET
+response := Request[MinhaResponse, ErroResponse]{
+    Ctx:        ctx,
     Client:     client,
     HttpMethod: http.MethodGet,
     Path:       "/usuarios/1",
 }.Call()
 
-// Exemplo de POST com corpo
+// Exemplo de requisição POST com corpo (JSON)
 novoUsuario := Usuario{Nome: "João", Email: "joao@exemplo.com"}
-response := Request[UsuarioResponse, ErrorResponse]{
-    Ctx:        context.Background(),
+response := Request[UsuarioResponse, ErroResponse]{
+    Ctx:        ctx,
     Client:     client,
     HttpMethod: http.MethodPost,
     Path:       "/usuarios",
     Body:       &novoUsuario,
 }.Call()
 ```
-### 2. Upload de Arquivos (Multipart)
 
-Suporte para envio de arquivos usando `multipart/form-data`:
+### 2. Upload de Arquivos (`Multipart`)
 
-``` go showLineNumbers
+Suporte nativo para envio de arquivos e campos de formulário:
+
+```go showLineNumbers
 arquivo := bytes.NewBufferString("conteúdo do arquivo")
 response := Request[RespostaUpload, ErroUpload]{
-    Ctx:        context.Background(),
+    Ctx:        ctx,
     Client:     client,
     HttpMethod: http.MethodPost,
     Path:       "/upload",
@@ -74,68 +80,56 @@ response := Request[RespostaUpload, ErroUpload]{
             File:        arquivo,
             ContentType: "text/plain",
         },
-        "descricao": "Meu documento",
+        "categoria": "documentos_pessoais",
     },
 }.Call()
 ```
 
-### 3. Cache
+### 3. Integração com Cache
 
-Suporte para [cache](./cache.md) nas requisições.
+É possível habilitar o [cache](./cache.md) diretamente na definição da requisição para evitar chamadas repetitivas.
 
-``` go showLineNumbers
+```go showLineNumbers
 response := Request[DadosUsuario, ErroResponse]{
-    Ctx:        context.Background(),
+    Ctx:        ctx,
     Client:     client,
     HttpMethod: http.MethodGet,
     Path:       "/usuarios/1",
-    Cache:      cacheDB.NewCache[DadosUsuario]("keyName", 10 * time.Second), // cria uma chave com 10s de TTL.
+    Cache:      cacheDB.NewCache[DadosUsuario]("user_1_key", 10 * time.Minute),
 }.Call()
 ```
 
 ### 4. Tratamento de Respostas
 
-O cliente fornece uma interface que facilita o tratamento das respostas: `ResponseData`.
+A estrutura `ResponseData` simplifica a verificação do resultado da operação:
 
-``` go showLineNumbers
+```go showLineNumbers
 if response.HasSuccess() {
     dados := response.SuccessBody()
-    // processar dados de sucesso
+    // Lógica para sucesso (Status 2xx)
 } else if response.HasError() {
     erro := response.ErrorBody()
-    // tratar erro
+    // Lógica para erro mapeado
 }
 
-// Verificar tipo de resposta
+// Auxiliares de verificação de Status Code
 if response.IsSuccessfulResponse() {
-    // Status 2xx
+    // 2xx
 } else if response.IsClientErrorResponse() {
-    // Status 4xx
+    // 4xx
 } else if response.IsServerErrorResponse() {
-    // Status 5xx
+    // 5xx
 }
 ```
-## Recursos de Resiliência
 
-### Circuit Breaker
+## Resiliência e Tolerância a Falhas
 
-O cliente implementa um circuit breaker que:
-- Abre após 5 falhas consecutivas
-- Permanece aberto por 10 segundos
+### *Circuit Breaker*
+O cliente monitora a saúde do serviço de destino. Por padrão:
+- O circuito **abre** após 5 falhas consecutivas.
+- Permanece aberto por 10 segundos antes de tentar uma nova conexão (*half-open*).
 
-### Retry
-
-Sistema de retry configurável que:
-- Permite definir número máximo de tentativas
-- Configura tempo de espera entre tentativas
-
-## Tipos de Dados
-
-O cliente utiliza interfaces genéricas para dados de requisição e resposta:
-- `RequestData`: Interface para dados de requisição.
-- `ResponseSuccessData`: Interface para dados de resposta de sucesso.
-- `ResponseErrorData`: Interface para dados de resposta de erro.
-
-Este design permite forte tipagem e flexibilidade ao mesmo tempo.
+### *Retry* (Re-tentativa)
+Permite configurar o comportamento em caso de falhas temporárias de rede ou indisponibilidade momentânea, definindo o número de tentativas e o intervalo entre elas.
 
 ___

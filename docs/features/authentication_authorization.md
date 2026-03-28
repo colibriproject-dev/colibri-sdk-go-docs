@@ -1,37 +1,39 @@
 ---
 sidebar_position: 8
-title: Autenticação e autorização
+title: Autenticação e Autorização
 ---
 
-O pacote de contexto de autenticação fornece uma estrutura simples mas poderosa para gerenciar a informação do usuário autenticado através da aplicação. Ele utiliza o mecanismo de contexto do Go para armazenar e recuperar detalhes do usuário, sendo especialmente útil em aplicações multi-tenant.
+O pacote de contexto de autenticação fornece uma estrutura simples e poderosa para gerenciar informações do usuário autenticado em toda a aplicação. Utilizando o mecanismo de contexto nativo do Go, ele permite armazenar e recuperar detalhes do usuário de forma segura, sendo ideal para aplicações *multi-tenant*.
 
 ## Componentes Principais
 
-### 1. AuthenticationContext
+### 1. `AuthenticationContext`
 
-A estrutura central que mantém as informações de autenticação:
+A estrutura central que mantém os dados de autenticação:
 
-``` go showLineNumbers
+```go showLineNumbers
 type AuthenticationContext struct {
     TenantID string `json:"tenantId"`
     UserID   string `json:"userId"`
 }
 ```
 
-### 2. Interface IAuthenticationContext
+### 2. Interface `IAuthenticationContext`
 
-Define o contrato para acessar informações de autenticação:
+Define o contrato para acesso padronizado às informações:
 
-``` go showLineNumbers
+```go showLineNumbers
 type IAuthenticationContext interface {
     GetUserID() string
     GetTenantID() string
 }
 ```
 
-### 3. Estrutura de Usuário
+### 3. Estrutura de `User`
 
-``` go showLineNumbers
+Representa o perfil completo do usuário no sistema:
+
+```go showLineNumbers
 type User struct {
     ID       string
     Email    string
@@ -46,23 +48,25 @@ type User struct {
 
 ## Funcionalidades Principais
 
-### 1. Criação do Contexto de Autenticação
+### 1. Criação do Contexto
 
-``` go showLineNUmbers
+```go showLineNumbers
 authContext := security.NewAuthenticationContext("tenant123", "user456")
 ```
 
-### 2. Armazenamento no Contexto
+### 2. Armazenamento no Contexto Go
 
-``` go showLineNUmbers
-// Adiciona as informações de autenticação ao contexto
+Adicione as informações de autenticação ao contexto da requisição:
+
+```go showLineNumbers
 ctx = authContext.SetInContext(context.Background())
 ```
 
-### 3. Recuperação do Contexto
+### 3. Recuperação de Dados
 
-``` go showLineNUmbers
-// Recupera as informações de autenticação do contexto
+Recupere as informações de qualquer lugar que tenha acesso ao contexto:
+
+```go showLineNumbers
 authContext := security.GetAuthenticationContext(ctx)
 if authContext != nil {
     tenantID := authContext.GetTenantID()
@@ -70,97 +74,55 @@ if authContext != nil {
 }
 ```
 
-### 4. Validação do Contexto
+### 4. Validação
 
-``` go showLineNUmbers
-// Verifica se o contexto de autenticação é válido
+Verifique se o contexto possui dados válidos:
+
+```go showLineNumbers
 if authContext.Valid() {
-    // Contexto válido, prosseguir com operação
+    // Prosseguir com a operação
 }
 ```
 
 ## Exemplos de Uso
 
-### 1. Middleware HTTP de Autenticação
-``` go
-func AuthMiddleware(next http.Handler) http.Handler {
-    return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-        // Extrair e validar token de autenticação (exemplo simplificado)
-        token := r.Header.Get("Authorization")
-        
-        // Processar token e extrair identificadores
-        tenantID := "tenant-extraído-do-token"
-        userID := "user-extraído-do-token"
-        
-        // Criar contexto de autenticação
-        authContext := security.NewAuthenticationContext(tenantID, userID)
-        
-        // Verificar validade
-        if !authContext.Valid() {
-            http.Error(w, "Credenciais inválidas", http.StatusUnauthorized)
-            return
-        }
-        
-        // Adicionar ao contexto e prosseguir
-        ctx := authContext.SetInContext(r.Context())
-        next.ServeHTTP(w, r.WithContext(ctx))
-    })
-}
-```
+### 1. Acesso a Dados *Multi-tenant*
 
-### 2. Acesso a Dados Multi-tenant
+Garanta o isolamento de dados utilizando o `TenantID` recuperado do contexto.
 
-``` go showLineNUmbers
-func (r *Repository) BuscarDadosDoUsuário(ctx context.Context) (*DadosUsuário, error) {
-    // Recuperar contexto de autenticação
+```go showLineNumbers
+func (r *Repository) BuscarDados(ctx context.Context) (*Dados, error) {
     authContext := security.GetAuthenticationContext(ctx)
     if authContext == nil {
         return nil, errors.New("usuário não autenticado")
     }
     
-    // Utilizar informações para buscar dados específicos do tenant/usuário
+    // Filtro obrigatório por TenantID para segurança
     return r.db.Query(
-        "SELECT * FROM dados WHERE tenant_id = ? AND user_id = ?",
+        "SELECT * FROM tabela WHERE tenant_id = ? AND user_id = ?",
         authContext.GetTenantID(),
         authContext.GetUserID(),
     )
 }
 ```
 
-### 3. Propagação em Serviços
+### 2. Propagação entre Camadas
 
-``` go showLineNUmbers
-type Service struct {
-    repository Repository
-}
+O contexto deve ser passado adiante para manter a cadeia de autenticação íntegra.
 
-func (s *Service) ProcessarOperação(ctx context.Context, dados *Dados) error {
-    // O contexto já contém as informações de autenticação
-    // Apenas passar adiante para manter a cadeia de autenticação
-    return s.repository.SalvarDados(ctx, dados)
+```go showLineNumbers
+func (s *Service) Processar(ctx context.Context, dados *Dados) error {
+    // O contexto já carrega as informações de segurança.
+    // Apenas repasse para a camada de persistência.
+    return s.repository.Salvar(ctx, dados)
 }
 ```
 
 ## Boas Práticas
 
-1. **Propagação do Contexto**:
-    - Sempre propague o contexto através das chamadas de função
-    - Não crie novos contextos sem necessidade
-    - Mantenha a cadeia de informações de autenticação
-
-2. **Validação**:
-    - Verifique `authContext != nil` antes de acessar suas propriedades
-    - Use para garantir que os IDs são válidos `Valid()`
-    - Nunca assuma que o contexto está presente
-
-3. **Segurança**:
-    - O contexto de autenticação deve ser criado apenas após validação de credenciais
-    - Não armazene informações sensíveis (senhas, tokens) no contexto
-    - Limite as informações ao mínimo necessário
-
-4. **Isolamento Multi-tenant**:
-    - Use sempre o TenantID em consultas de banco de dados
-    - Aplique filtros de tenant em todas as operações de dados
-    - Mantenha isolamento rígido entre dados de diferentes tenants
+1.  **Propagação**: Sempre passe o `context.Context` como primeiro argumento de suas funções para não perder o rastro da autenticação.
+2.  **Validação Rígida**: Sempre verifique se `authContext != nil` e utilize `Valid()` antes de realizar operações críticas.
+3.  **Segurança de Dados**: O contexto de autenticação deve ser criado apenas **após** a validação bem-sucedida de credenciais (como um token JWT).
+4.  **Isolamento**: Em sistemas *multi-tenant*, nunca realize consultas ao banco de dados sem incluir o `TenantID` na cláusula `WHERE`.
 
 ___

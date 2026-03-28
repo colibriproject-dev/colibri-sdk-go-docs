@@ -9,39 +9,43 @@ Este pacote fornece uma camada de abstração robusta para operações com banco
 
 ### 1. Gerenciamento de Conexão
 
-``` go
-// Inicialização do banco de dados, essa instrução deve estar presente no arquivo main.go
+Para ativar o banco de dados em sua aplicação, utilize a inicialização no arquivo `main.go`:
+
+```go showLineNumbers
+// Inicialização do banco de dados
 sqlDB.Initialize()
 ```
 
 Características:
-- Gerenciamento automático de pool de conexões
-- Suporte a configuração de número máximo de conexões
-- Integração com sistema de observabilidade
-- Fechamento seguro de conexões
+*   Gerenciamento automático de *pool* de conexões.
+*   Configuração de número máximo de conexões.
+*   Integração nativa com o sistema de observabilidade.
+*   Encerramento seguro de conexões (*graceful shutdown*).
 
-Variáveis de ambiente necessárias:
-- `SQL_DB_HOST`: host do banco de dados
-- `SQL_DB_PORT`: porta do banco de dados
-- `SQL_DB_NAME`: nome do banco de dados
-- `SQL_DB_USER`: usuário do banco de dados
-- `SQL_DB_PASSWORD`: senha de conexão do usuário do banco de dados
-- `SQL_DB_MAX_OPEN_CONNS`: define o máximo de conexões no pool de conexões do banco dados. Default = 10
-- `SQL_DB_MAX_IDLE_CONNS`: define a quantidade de conexões idle no pool de conexões do banco de dados. Defatul = 3
-- `SQL_DB_SSL_MODE`: modo SSL do banco de dados (opcional)
-- `SQL_DB_MIGRATION`: flag para ativar as migrações (opcional)
-- `MIGRATION_SOURCE_URL`: caminho da pasta onde se encontra as migrations (opcional)
+Variáveis de ambiente disponíveis:
+- `SQL_DB_HOST`: Host do banco de dados.
+- `SQL_DB_PORT`: Porta do banco de dados.
+- `SQL_DB_NAME`: Nome do banco de dados.
+- `SQL_DB_USER`: Usuário do banco de dados.
+- `SQL_DB_PASSWORD`: Senha de conexão.
+- `SQL_DB_MAX_OPEN_CONNS`: Define o máximo de conexões abertas no pool. *Default*: 10.
+- `SQL_DB_MAX_IDLE_CONNS`: Define a quantidade de conexões inativas (*idle*) no pool. *Default*: 3.
+- `SQL_DB_SSL_MODE`: Modo SSL do banco de dados (opcional).
+- `SQL_DB_MIGRATION`: Ativa a execução automática de migrações (opcional).
+- `MIGRATION_SOURCE_URL`: Caminho da pasta onde se encontram as migrações (opcional).
 
 ### 2. Consultas (Query)
 
 #### Consulta Simples
 
-``` go showLineNumbers
+Utilize `NewQuery` para realizar consultas SQL puras mapeadas para *structs* Go.
+
+```go showLineNumbers
 // Consulta que retorna um único registro
-usuario, err := NewQuery[Usuario](ctx, "SELECT u.id, u.name, u.birthday FROM users u WHERE u.id = $1", 1).One()
+usuario, err := NewQuery[Usuario](ctx, "SELECT id, name FROM users WHERE id = $1", 1).One()
 
 // Consulta que retorna múltiplos registros
-usuarios, err := NewQuery[Usuario](ctx, "SELECT u.id, u.name, u.birthday FROM users u JOIN profiles p ON u.profile_id = p.id WHERE p.profile = 'ADMIN'").Many()
+usuarios, err := NewQuery[Usuario](ctx, "SELECT id, name FROM users WHERE active = true").Many()
 ```
 
 #### Consulta com Cache
@@ -56,7 +60,7 @@ usuario, err := NewCachedQuery(ctx, cache,
 
 ### 3. Consultas Paginadas
 
-Uma boa prática, é para consultas com múltiplos registros, paginar os resultados. Com isso evitamos sobrecarregar o servidor.
+Uma boa prática para consultas com múltiplos registros é paginar os resultados. Com isso, evitamos sobrecarregar o servidor e a rede.
 
 ``` go showLineNumbers
 pageNumber := 1
@@ -83,8 +87,8 @@ err := NewStatement(ctx,
 
 ### 5. Transações
 
-Muitas vezes necessitamos realizar múltiplas alterações em um mesmo bloco transacional. Para isso, podemos utilizar a classe `Transaction`.
-Para definições mais avançadas, podemos consultas a documentação estendida de [transações](./transactions.md).
+Muitas vezes, necessitamos realizar múltiplas alterações em um mesmo bloco transacional. Para isso, podemos utilizar a funcionalidade de `Transaction`.
+Para definições mais avançadas, consulte a documentação detalhada de [transações](./transactions.md).
 
 ``` go showLineNumbers
 tx := NewTransaction(sql.LevelSerializable)

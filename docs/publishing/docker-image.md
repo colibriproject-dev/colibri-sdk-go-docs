@@ -3,122 +3,91 @@ sidebar_position: 1
 title: Imagem Docker
 ---
 
-Nesta documentação, vamos aprender como criar e publicar uma API web utilizando containers Docker. Vamos usar como base um exemplo de aplicação chamada `my-awesome-service`.
+Nesta seção, vamos aprender como empacotar sua aplicação utilizando containers Docker. Utilizaremos o conceito de *multi-stage build* para garantir uma imagem final leve, segura e otimizada para produção.
 
-Para isso crie um arquivo com o nome `Dockerfile` na raiz do projeto. 
+## O arquivo `Dockerfile`
 
-## Passo 1: Entendendo o Dockerfile
+Crie um arquivo chamado `Dockerfile` na raiz do seu projeto com o seguinte conteúdo:
 
-O Dockerfile é o arquivo que contém as instruções para construir nossa imagem Docker. Vamos analisar o Dockerfile que usaremos como base:
-
-``` dockerfile showLineNumbers
+```dockerfile showLineNumbers
+# Estágio 1: Compilação
 FROM golang:1.24-alpine3.21 AS build
 
 WORKDIR /build
 
+# Copia os arquivos de dependências primeiro para aproveitar o cache do Docker
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copia o restante do código fonte
 COPY . .
 
+# Executa os testes unitários
 RUN go test ./... -v -failfast || exit 1
-RUN CGO_ENABLED=0 GOOS=linux go build -o my-awesome-service ./cmd/cli/main.go
 
+# Compila o binário estático
+RUN CGO_ENABLED=0 GOOS=linux go build -o app-bin ./cmd/main.go
+
+# Estágio 2: Imagem Final (Runtime)
 FROM gcr.io/distroless/static
 
 WORKDIR /app
-COPY --from=build /build/my-awesome-service /app/
 
-ENTRYPOINT ["/app/my-awesome-service"]
+# Copia apenas o binário compilado do estágio anterior
+COPY --from=build /build/app-bin /app/
+
+# Define o ponto de entrada da aplicação
+ENTRYPOINT ["/app/app-bin"]
 ```
-Este Dockerfile utiliza o conceito de `multi-stage build`, que consiste em:
 
-1. **Primeiro estágio (build)**:
-    - Linha 1: usa a imagem como base `golang:1.24-alpine3.21`.
-    - Linha 3: define a pasta de trabalho como `/build`.
-    - Linha 5: copia todo o código fonte para dentro do container.
-    - Linha 7: executa os testes.
-    - Linha 8: compila a aplicação gerando um binário chamado `my-awesome-service`.
+### Por que usar *Multi-stage Build*?
 
-2. **Segundo estágio**:
-    - Linha 10: usa a imagem que é extremamente leve e segura `gcr.io/distroless/static`
-    - Linha 12: define a pasta padrão como `/app`.
-    - Linha 13: copia apenas o binário compilado do primeiro estágio.
-    - Linha 15: define o ponto de entrada para executar a aplicação.
+1.  **Segurança**: A imagem final não contém o código fonte, compiladores ou ferramentas de *build*, reduzindo a superfície de ataque.
+2.  **Tamanho**: Utilizamos a imagem `distroless/static` no estágio final, que é extremamente pequena (contém apenas o essencial para executar binários Go), resultando em imagens de poucos MBs.
+3.  **Eficiência**: O Docker faz o *cache* das camadas. Ao copiar `go.mod` e `go.sum` antes do restante do código, as dependências só serão baixadas novamente se houver alteração nestes arquivos.
 
-## Passo 2: Criando o arquivo .dockerignore
+## O arquivo `.dockerignore`
 
-O arquivo `.dockerignore` é importante para excluir arquivos desnecessários durante a construção da imagem: 
+Para evitar que arquivos desnecessários (como logs, binários locais ou a pasta `.git`) sejam enviados para o contexto de *build* do Docker, crie um arquivo `.dockerignore`:
 
-```ignorelang showLineNumbers
+```text
+.git
 *.log
-*.txt
-my-awesome-service
-logs/
+bin/
+vendor/
+.env
 ```
 
-Isso impede que arquivos de log, arquivos de texto, o binário já compilado localmente e diretórios de logs sejam incluídos na imagem, tornando-a mais leve e o processo de build mais rápido.
+## Construindo a imagem
 
-## Passo 3: Estrutura do Projeto
+Execute o comando abaixo no diretório raiz do seu projeto:
 
-Certifique-se que seu projeto tenha uma estrutura similar a esta:
-
-```text showLineNumbers 
-projeto/
-├── cmd/
-│   └── cli/
-│       └── main.go
-├── internal/
-│   └── (seus pacotes internos)
-├── pkg/
-│   └── (seus pacotes públicos)
-├── Dockerfile
-└── .dockerignore
+```shell
+docker build -t meu-microsservico:latest .
 ```
 
-## Passo 4: Construindo a Imagem Docker
+## Executando o container
 
-Para construir a imagem, execute o seguinte comando no diretório raiz do projeto:
+Para iniciar sua aplicação em um container, passando as variáveis de ambiente necessárias para o `colibri-sdk-go`:
 
-```bash showLineNumbers
-docker build -t my-awesome-service:latest .
-```
-
-## Passo 5: Verificando a Imagem Criada
-
-Verifique se a imagem foi criada corretamente:
-
-```bash showLineNumbers
-docker images | grep my-awesome-service
-```
-
-## Passo 6: Executando o Container
-
-Para executar sua API em um container, use:
-
-```bash showLineNumbers
+```shell showLineNumbers
 docker run --rm \
   -e ENVIRONMENT=production \
+  -e APP_NAME=meu-microsservico \
   -e APP_TYPE=service \
-  -e APP_NAME=my-awesome-project \
-  -e CLOUD=gcp \
+  -e CLOUD=none \
   -e PORT=8080 \
   -p 8080:8080 \
-  my-awesome-service:latest
+  meu-microsservico:latest
 ```
 
-Este comando define algumas variáveis de ambiente necessários para iniciar o `colibri-sdk-go` corretamente e mapeia a porta 8080 do container para a porta 8080 do host, permitindo acesso à API.
-
-## Passo 7: Configuração para Ambientes de Produção
-
-Para ambientes de produção, considere:
-- Definir variáveis de ambiente para configuração da aplicação
-- Implementar health checks
-- Utilizar Kubernetes para orquestração
+### Explicação dos parâmetros:
+*   `--rm`: Remove o container automaticamente após o encerramento.
+*   `-e`: Define variáveis de ambiente.
+*   `-p 8080:8080`: Mapeia a porta 8080 do seu computador para a porta 8080 do container.
 
 ## Conclusão
 
-Agora você tem uma imagem Docker otimizada para sua API web! 
-
-Esta abordagem usando multi-stage build garante que a imagem final seja pequena e segura, contendo apenas os componentes necessários para executar a aplicação.
-
-O uso da imagem base `gcr.io/distroless/static` para o segundo estágio proporciona uma superfície de ataque reduzida, pois esta imagem contém apenas o essencial para executar a aplicação, sem shell ou utilitários adicionais que poderiam ser explorados por atacantes.
+Utilizando esta abordagem, você garante que sua aplicação Go rode de forma consistente em qualquer ambiente (desenvolvimento, homologação ou produção), com o máximo de performance e segurança.
 
 ___
