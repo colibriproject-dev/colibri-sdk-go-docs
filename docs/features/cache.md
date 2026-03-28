@@ -3,28 +3,31 @@ sidebar_position: 4
 title: Cache
 ---
 
-O pacote oferece uma implementação robusta de cache usando [Redis](https://redis.io), com suporte a tipos genéricos e TTL (Time To Live) configurável. É especialmente útil para armazenar temporariamente dados frequentemente acessados, reduzindo a carga em outros serviços como banco de dados.
+O pacote oferece uma implementação robusta de cache utilizando [Redis](https://redis.io), com suporte a tipos genéricos e TTL (*Time To Live*) configurável. É especialmente útil para armazenar temporariamente dados frequentemente acessados, reduzindo a carga em outros serviços como o banco de dados.
 
-## Componentes Principais
+## Configuração
 
-### 1. Inicialização
+Para utilizar o cache, as seguintes variáveis de ambiente podem ser configuradas:
 
-Para configurarmos a aplicação para utilizar cache, a instrução abaixo deve ser incluída na função `main`.
+- `CACHE_URI`: URI de conexão com o Redis (ex: `localhost:6379`).
+- `CACHE_PASSWORD`: Senha de conexão do Redis (opcional).
 
-``` go showLineNumbers
+## Inicialização
+
+Para habilitar o cache em sua aplicação, inclua a instrução abaixo na função `main.go`:
+
+```go showLineNumbers
 // Inicialização do cache
 cacheDB.Initialize()
 ```
 
-Características da inicialização:
-- Conexão automática com [Redis](https://redis.io).
+Características:
+- Conexão automática com o [Redis](https://redis.io).
 - Integração com [OpenTelemetry](https://opentelemetry.io/) para monitoramento.
 
-Variáveis de ambiente necessárias:
-- `CACHE_URI`: host do banco de dados.
-- `CACHE_PASSWORD`: porta do banco de dados (Opcional).
+## Componentes Principais
 
-### 2. Criação de Cache
+### 1. Criação de Cache
 
 ``` go showLineNumbers
 // Criação de um novo cache com TTL
@@ -35,7 +38,7 @@ Parâmetros:
 - `name`: Nome único para identificar o cache.
 - `ttl`: Tempo de vida dos dados no cache (time.Duration).
 
-### 3. Operações Principais
+### 2. Operações Principais
 
 #### Armazenamento (Set)
 
