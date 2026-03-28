@@ -25,8 +25,16 @@ const config = {
   onBrokenMarkdownLinks: 'warn',
 
   i18n: {
-    defaultLocale: 'en',
-    locales: ['en'],
+    defaultLocale: 'pt-BR',
+    locales: ['pt-BR', 'en'],
+    localeConfigs: {
+      'pt-BR': {
+        label: 'Português (Brasil)',
+      },
+      en: {
+        label: 'English',
+      },
+    },
   },
 
   presets: [
@@ -84,6 +92,10 @@ const config = {
           {
             type: 'docsVersionDropdown',
             versions: ['current', '0.1.8', '0.1.7', '0.1.6', '0.1.5', '0.1.4'],
+          },
+          {
+            type: 'localeDropdown',
+            position: 'right',
           },
         ],
       },

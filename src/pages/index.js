@@ -3,6 +3,7 @@ import Link from '@docusaurus/Link';
 import useDocusaurusContext from '@docusaurus/useDocusaurusContext';
 import Layout from '@theme/Layout';
 import HomepageFeatures from '@site/src/components/HomepageFeatures';
+import Translate, {translate} from '@docusaurus/Translate';
 
 import Heading from '@theme/Heading';
 import styles from './index.module.css';
@@ -20,7 +21,7 @@ function HomepageHeader() {
           <Link
             className="button button--secondary button--lg"
             to="/docs/intro">
-            colibri-sdk-go Tutorial - 5min ⏱️
+            <Translate id="homepage.visitTutorial">colibri-sdk-go Tutorial - 5min ⏱️</Translate>
           </Link>
         </div>
       </div>
@@ -32,8 +33,8 @@ export default function Home() {
   const {siteConfig} = useDocusaurusContext();
   return (
     <Layout
-      title={`Hello from ${siteConfig.title}`}
-      description="Description will go into a meta tag in <head />">
+      title={translate({message: `Hello from ${siteConfig.title}`})}
+      description={translate({message: "Description will go into a meta tag in <head />"})}>
       <HomepageHeader />
       <main>
         <HomepageFeatures />
