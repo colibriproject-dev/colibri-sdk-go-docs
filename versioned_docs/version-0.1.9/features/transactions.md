@@ -1,15 +1,17 @@
 ---
 sidebar_position: 9
-title: Controle de transações
+title: Controle de Transações
 ---
 
-Este pacote fornece uma abstração para trabalhar com transações SQL em Go, permitindo a execução segura de múltiplas operações de banco de dados como uma única unidade atômica. O sistema garante que todas as operações sejam confirmadas (commit) apenas se todas forem bem-sucedidas, ou que nenhuma seja aplicada (rollback) em caso de falha.
+Este pacote fornece uma abstração robusta para trabalhar com transações SQL em Go, permitindo a execução segura de múltiplas operações de banco de dados como uma única unidade atômica. O sistema garante a integridade dos dados através do mecanismo de *commit* (confirmação) apenas se todas as operações forem bem-sucedidas, ou *rollback* (reversão) automático em caso de qualquer falha.
 
 ## Componentes Principais
 
-### Interface Transaction
+### Interface `Transaction`
 
-``` go showLineNumbers
+A interface `Transaction` define o contrato para a execução de blocos transacionais:
+
+```go showLineNumbers
 type Transaction interface {
     Execute(context.Context, func(ctx context.Context) error) error
 }
@@ -21,35 +23,37 @@ Esta interface define o contrato básico para todas as implementações de trans
 
 ### 1. Criação de Transações
 
-``` go showLineNumbers
-// Criar uma transação com nível de isolamento padrão
+Você pode criar uma transação com o nível de isolamento padrão ou especificar um nível customizado:
+
+```go showLineNumbers
+// Criar uma transação com nível de isolamento padrão (Read Committed no PostgreSQL)
 transaction := sqlDB.NewTransaction()
 
-// Criar uma transação com nível de isolamento específico
+// Criar uma transação com nível de isolamento Serializável
 transaction := sqlDB.NewTransaction(sql.LevelSerializable)
 ```
 
-### 2. Execução de Transações
+### 2. Execução de Blocos Transacionais
 
-``` go showLineNumbers
+A execução ocorre dentro de uma função anônima (*callback*). Se a função retornar `nil`, a transação é confirmada; se retornar um erro, a transação é revertida.
+
+```go showLineNumbers
 err := transaction.Execute(ctx, func(ctx context.Context) error {
-    // Operações de banco de dados aqui
-    // Retornar erro se alguma operação falhar
-    return nil
+    // Todas as operações aqui dentro devem usar o 'ctx' fornecido pelo callback
+    // para garantir que herdam a mesma transação.
+    return nil 
 })
 ```
 
-### 3. Níveis de Isolamento
+## Níveis de Isolamento Suportados
 
-O sistema suporta todos os níveis de isolamento padrão SQL:
+O *framework* suporta todos os níveis de isolamento padrão do pacote `database/sql`:
 - `sql.LevelDefault`
 - `sql.LevelReadUncommitted`
 - `sql.LevelReadCommitted`
-- `sql.LevelWriteCommitted`
 - `sql.LevelRepeatableRead`
-- `sql.LevelSnapshot`
 - `sql.LevelSerializable`
-- `sql.LevelLinearizable`
+*(Outros níveis como `Snapshot` e `Linearizable` dependem do suporte do driver do banco de dados utilizado).*
 
 ## Exemplos de Uso
 

@@ -1,30 +1,30 @@
 {
   "version.label": {
-    "message": "0.1.4",
-    "description": "The label for version 0.1.4"
+    "message": "0.1.9",
+    "description": "The label for version 0.1.9"
   },
   "sidebar.tutorialSidebar.category.Começando": {
-    "message": "Começando",
+    "message": "Getting Started",
     "description": "The label for category 'Começando' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Começando.link.generated-index.description": {
-    "message": "Iniciando seu projeto com colibri-sdk-go",
+    "message": "Starting your project with colibri-sdk-go",
     "description": "The generated-index page description for category 'Começando' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Funcionalidades": {
-    "message": "Funcionalidades",
+    "message": "Features",
     "description": "The label for category 'Funcionalidades' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Funcionalidades.link.generated-index.description": {
-    "message": "Funcionalidades do colibri-sdk-go",
+    "message": "Features of colibri-sdk-go",
     "description": "The generated-index page description for category 'Funcionalidades' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Publicando": {
-    "message": "Publicando",
+    "message": "Publishing",
     "description": "The label for category 'Publicando' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.Publicando.link.generated-index.description": {
-    "message": "Publicanco com colibri colibri-sdk-go",
+    "message": "Publishing with colibri-sdk-go",
     "description": "The generated-index page description for category 'Publicando' in sidebar 'tutorialSidebar'"
   }
 }

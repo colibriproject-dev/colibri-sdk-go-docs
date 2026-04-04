@@ -1,0 +1,73 @@
+---
+sidebar_position: 4
+title: Primeiros Passos
+---
+
+Nesta seção, vamos criar sua primeira rota e entender como o `colibri-sdk-go` organiza os *endpoints*.
+
+## Criando sua primeira rota
+
+Para adicionar um novo *endpoint* ao serviço, devemos definir um *slice* do tipo `[]restserver.Route`.
+
+```go showLineNumbers
+package main
+
+import (
+	"github.com/colibriproject-dev/colibri-sdk-go/colibri"
+	"github.com/colibriproject-dev/colibri-sdk-go/pkg/web/restserver"
+)
+
+type Awesome struct {
+	Greeting string `json:"greeting"`
+}
+
+var awesomeRoutes = []restserver.Route{
+	{
+		URI:    "awesome",
+		Method: "GET",
+		Prefix: restserver.NoPrefix,
+		Function: func(ctx restserver.WebContext) {
+			body := Awesome{Greeting: "Meu Primeiro Projeto Colibri"}
+			ctx.JsonResponse(200, &body)
+		},
+	},
+}
+
+func main() {
+	colibri.InitializeApp()
+
+	// Adiciona as rotas ao servidor
+	restserver.AddRoutes(awesomeRoutes)
+
+	// Inicia o servidor (bloqueante)
+	restserver.ListenAndServe()
+}
+```
+
+### Entendendo o código:
+
+1.  **Definição da Rota**: Criamos um objeto dentro do *slice* `awesomeRoutes` com as seguintes propriedades:
+    *   `URI`: O caminho do recurso. No exemplo, acessível em `http://localhost:8080/awesome`.
+    *   `Method`: O método HTTP (GET, POST, etc.).
+    *   `Prefix`: Define se a rota terá um prefixo automático (como `/api/` ou `/public/`). No exemplo, usamos `NoPrefix`.
+    *   `Function`: A função *handler* que contém a lógica de negócio e responde ao cliente.
+2.  **Inicialização**: Na função `main`, chamamos `colibri.InitializeApp()` para configurar o ambiente.
+3.  **Registro**: Utilizamos `restserver.AddRoutes()` para carregar nossas definições de rotas.
+
+## Testando a aplicação
+
+Após iniciar o serviço, você pode testar o *endpoint* utilizando o `curl` no terminal:
+
+```shell
+curl -X GET http://localhost:8080/awesome
+```
+
+**Resultado esperado:**
+
+```json
+{
+  "greeting": "Meu Primeiro Projeto Colibri"
+}
+```
+
+___

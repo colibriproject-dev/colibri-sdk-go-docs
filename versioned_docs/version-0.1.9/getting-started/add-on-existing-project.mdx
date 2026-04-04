@@ -1,0 +1,96 @@
+---
+sidebar_position: 3
+title: Adicionando em um Projeto Existente
+---
+
+Para utilizar o **colibri-sdk-go** em um projeto já existente, siga os passos abaixo para realizar as configurações necessárias.
+
+## 1. Adicionar a dependência
+
+No diretório raiz do seu projeto Go, execute o comando:
+
+```shell
+go get github.com/colibriproject-dev/colibri-sdk-go
+```
+
+## 2. Configurar variáveis de ambiente
+
+O `colibri-sdk-go` necessita de algumas variáveis básicas para inicializar corretamente. Você pode defini-las diretamente no ambiente ou através de um arquivo `.env` na raiz do projeto:
+
+```dotenv showLineNumbers
+ENVIRONMENT=development
+APP_NAME=meu-projeto-go
+APP_TYPE=service
+CLOUD=gcp
+```
+
+### Detalhamento das variáveis:
+
+1.  **`ENVIRONMENT`**: Define o ambiente de execução.
+    *   `development`: Para desenvolvimento local (habilita logs formatados e outras facilidades).
+    *   `sandbox`: Ambiente de validação.
+    *   `test`: Utilizado durante a execução de testes.
+    *   `production`: Ambiente produtivo.
+2.  **`APP_NAME`**: Nome da sua aplicação, utilizado para identificação em logs e monitoramento.
+3.  **`APP_TYPE`**: Define o comportamento base da aplicação.
+    *   `service`: Padrão para microsserviços de longa duração.
+    *   `serverless`: Para funções em nuvem (*Lambdas* ou *Cloud Functions*).
+    *   `cli`: Para ferramentas de linha de comando.
+4.  **`CLOUD`**: Especifica o provedor de nuvem para integração automática.
+    *   `aws`: Integrações com serviços AWS.
+    *   `gcp`: Integrações com serviços Google Cloud.
+    *   `none`: Sem integração com provedores de nuvem.
+
+## 3. Configurar o arquivo `main.go`
+
+Integre o *SDK* no seu ponto de entrada principal:
+
+```go showLineNumbers
+package main
+
+import (
+	"github.com/colibriproject-dev/colibri-sdk-go/colibri"
+	"github.com/colibriproject-dev/colibri-sdk-go/pkg/web/restserver"
+)
+
+func main() {
+	// Inicializa as configurações, logs e conexões base
+	colibri.InitializeApp()
+
+	// Sua lógica de negócio aqui...
+
+	// Inicia o servidor web (porta padrão: 8080)
+	restserver.ListenAndServe()
+}
+```
+
+*Dica: Você pode alterar a porta do servidor definindo a variável de ambiente `PORT`.*
+
+## 4. Executando o projeto
+
+Inicie sua aplicação com o comando padrão do Go:
+
+```shell
+go run main.go
+```
+
+Se a configuração estiver correta, você verá o *banner* do Colibri e os logs de inicialização no console:
+
+```text
+      .   _            _ _ _          _
+     { \/'o;===       | (_) |        (_)
+.----'-/'-/  ___  ___ | |_| |__  _ __ _
+ '-..-| /   / __ / _ \| | | '_ \| '__| |
+    /\/\   | (__| (_) | | | |_) | |  | |
+    '--'    \___ \___/|_|_|_.__/|_|  |_|
+            project
+
+# meu-projeto-go #
+
+{"time":"...","level":"INFO","msg":"Initializing GCP","caller":"cloud.Initialize"}
+{"time":"...","level":"INFO","msg":"Service 'WEB-REST' running in 8080 port","caller":"restserver.ListenAndServe"}
+```
+
+Parabéns! Seu projeto agora está potencializado pelo Colibri.
+
+___
