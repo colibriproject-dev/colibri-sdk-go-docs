@@ -3,7 +3,7 @@
     "message": "Colibri Project - Go"
   },
   "docusaurus.config.tagline": {
-    "message": "Go for all!"
+    "message": "An opinionated Go SDK for modern and scalable microservices."
   },
   "theme.ErrorPageContent.title": {
     "message": "This page crashed.",
@@ -336,6 +336,6 @@
     "message": "colibri-sdk-go Tutorial - 5 min ⏱️"
   },
   "Description will go into a meta tag in <head />": {
-    "message": "Go SDK for all!"
+    "message": "An opinionated Go SDK for modern and scalable microservices."
   }
 }
