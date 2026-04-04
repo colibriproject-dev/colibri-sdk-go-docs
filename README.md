@@ -1,8 +1,17 @@
 [![Deploy Docusaurus to GitHub Pages](https://github.com/colibriproject-dev/colibri-sdk-go-docs/actions/workflows/pages.yml/badge.svg)](https://github.com/colibriproject-dev/colibri-sdk-go-docs/actions/workflows/pages.yml)
 
-# Website
+# Colibri SDK Go - Documentation
 
-This website is built using [Docusaurus](https://docusaurus.io/), a modern static website generator.
+This is the official documentation repository for [colibri-sdk-go](https://github.com/colibriproject-dev/colibri-sdk-go), built with [Docusaurus](https://docusaurus.io/).
+
+The goal of this site is to provide guides, API references and examples to facilitate the use of the Colibri framework in Go projects.
+
+### 🌐 Official Website
+The documentation is available at: **[https://docs.colibriproject.dev.br](https://docs.colibriproject.dev.br)**
+
+---
+
+## Local Development
 
 ### Installation
 
