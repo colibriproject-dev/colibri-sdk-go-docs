@@ -3,29 +3,23 @@ sidebar_position: 7
 title: Observabilidade
 ---
 
-Este pacote fornece uma camada completa de observabilidade para aplicações, integrando métricas, tracing e logging. É encapsulada a implementação com [OpenTelemetry](https://opentelemetry.io/), oferecendo recursos para monitoramento de transações, segmentos e erros.
+O pacote fornece uma camada completa de observabilidade para aplicações, integrando métricas, rastreamento (*tracing*) e logs. A implementação encapsula o [OpenTelemetry](https://opentelemetry.io/), oferecendo recursos para monitoramento de transações, segmentos e erros.
+
+## Configuração
+
+A configuração é realizada automaticamente ao iniciar o `colibri-sdk-go`. Para exportar os dados para um coletor OpenTelemetry, utilize a seguinte variável de ambiente:
+
+- `OTEL_EXPORTER_OTLP_ENDPOINT`: *Endpoint* do coletor OTLP (ex: `http://localhost:4318`).
+
+## Inicialização
+
+Ao inicializar o Colibri, os seguintes componentes são configurados:
+- Conexão [OpenTelemetry](https://opentelemetry.io/).
+- Métricas padrão da aplicação.
 
 ## Componentes Principais
 
-### 1. Inicialização
-
-A configuração é realizada automaticamente ao iniciar o `colibri-sdk-go`.
-
-São configurados os seguintes componentes:
-- Conexão [OpenTelemetry](https://opentelemetry.io/)
-- Configuração de métricas padrão
-
-#### Utilizando OpenTelemetry
-
-Para utilizar OpenTelemetry, basta adicionar as variáveis de ambiente:
-
-```dotenv showLineNumbers
-OTEL_EXPORTER_OTLP_ENDPOINT=http://localhost:4318
-```
-
-> `http://localhost:4318` é apenas um exemplo, defina com o endereço do seu serviço OpenTelemetry.
-
-### 2. Transações de monitoramento
+### 1. Transações de Monitoramento
 
 ``` go showLineNumbers
 // Iniciando uma nova transação monitoramento

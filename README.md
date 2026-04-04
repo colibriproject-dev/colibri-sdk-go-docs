@@ -66,7 +66,7 @@ Where to edit after versioning
 
 Version dropdown and navigation
 - The Docs version dropdown should automatically show released versions based on versions.json.
-- If your navbar item pins versions explicitly in docusaurus.config.js (e.g., versions: ['current', '0.1.4']), also add your new version to that array.
+- If your navbar item pins versions explicitly in docusaurus.config.js (e.g., versions: ['current', '0.1.5']), also add your new version to that array.
 
 Local testing
 ```sh
