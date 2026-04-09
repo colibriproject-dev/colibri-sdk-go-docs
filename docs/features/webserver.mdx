@@ -9,6 +9,19 @@ Isso cria uma camada de serviço independente. Como exemplo, o `colibri-sdk-go` 
 
 Para utilizar o servidor, devemos configurar a variável de ambiente `PORT` (o padrão é `8080`).
 
+## Configuração de CORS
+
+O servidor já possui um middleware de CORS configurado por padrão. As configurações podem ser ajustadas através das seguintes variáveis de ambiente:
+
+| Variável de ambiente | Descrição | Padrão |
+|---|---|---|
+| `CORS_ALLOW_ORIGINS` | Origens permitidas | `*` |
+| `CORS_ALLOW_METHODS` | Métodos HTTP permitidos | `OPTIONS, GET, POST, PUT, PATCH, DELETE` |
+| `CORS_ALLOW_HEADERS` | Headers permitidos na requisição | `Origin, Content-Type, Authorization, X-User-Id, X-Tenant-Id` |
+| `CORS_EXPOSE_HEADERS` | Headers expostos na resposta | _(vazio)_ |
+| `CORS_ALLOW_CREDENTIALS` | Permite envio de credenciais (cookies, auth headers) | `false` |
+| `CORS_MAX_AGE` | Tempo em segundos que o resultado do preflight pode ser cacheado | `0` |
+
 Após as configurações, adicionamos a instrução `restserver.ListenAndServe()` como a última linha da função `main`.
 
 ```go showLineNumbers
