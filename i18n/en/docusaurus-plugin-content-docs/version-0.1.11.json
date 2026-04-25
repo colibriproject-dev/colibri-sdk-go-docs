@@ -1,0 +1,30 @@
+{
+  "version.label": {
+    "message": "0.1.11",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.Começando": {
+    "message": "Getting Started",
+    "description": "The label for category 'Começando' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Começando.link.generated-index.description": {
+    "message": "Starting your project with colibri-sdk-go",
+    "description": "The generated-index page description for category 'Começando' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Funcionalidades": {
+    "message": "Features",
+    "description": "The label for category 'Funcionalidades' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Funcionalidades.link.generated-index.description": {
+    "message": "Features of colibri-sdk-go",
+    "description": "The generated-index page description for category 'Funcionalidades' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Publicando": {
+    "message": "Publishing",
+    "description": "The label for category 'Publicando' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.Publicando.link.generated-index.description": {
+    "message": "Publishing with colibri-sdk-go",
+    "description": "The generated-index page description for category 'Publicando' in sidebar 'tutorialSidebar'"
+  }
+}
