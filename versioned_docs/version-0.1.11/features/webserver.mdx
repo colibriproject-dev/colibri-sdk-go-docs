@@ -1,0 +1,129 @@
+---
+sidebar_position: 1
+title: Web server
+---
+
+O pacote `colibri-sdk-go` fornece uma abstração de um servidor web. "Por baixo do capô", utilizamos o [Fiber](https://github.com/gofiber/fiber), mas ele pode ser facilmente substituído através da implementação de um novo container no pacote `pkg/web/restserver`.
+
+Isso cria uma camada de serviço independente. Como exemplo, o `colibri-sdk-go` utilizava originalmente uma implementação baseada no [gorilla/mux](https://github.com/gorilla/mux), que foi substituída em versões posteriores mantendo a compatibilidade total com os projetos existentes.
+
+Para utilizar o servidor, devemos configurar a variável de ambiente `PORT` (o padrão é `8080`).
+
+## Configuração de CORS
+
+O servidor já possui um middleware de CORS configurado por padrão. As configurações podem ser ajustadas através das seguintes variáveis de ambiente:
+
+| Variável de ambiente | Descrição | Padrão |
+|---|---|---|
+| `CORS_ALLOW_ORIGINS` | Origens permitidas | `*` |
+| `CORS_ALLOW_METHODS` | Métodos HTTP permitidos | `OPTIONS, GET, POST, PUT, PATCH, DELETE` |
+| `CORS_ALLOW_HEADERS` | Headers permitidos na requisição | `Origin, Content-Type, Authorization, X-User-Id, X-Tenant-Id` |
+| `CORS_EXPOSE_HEADERS` | Headers expostos na resposta | _(vazio)_ |
+| `CORS_ALLOW_CREDENTIALS` | Permite envio de credenciais (cookies, auth headers) | `false` |
+| `CORS_MAX_AGE` | Tempo em segundos que o resultado do preflight pode ser cacheado | `0` |
+
+Após as configurações, adicionamos a instrução `restserver.ListenAndServe()` como a última linha da função `main`.
+
+```go showLineNumbers
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.ListenAndServe()
+}
+```
+
+## Rotas
+
+Para registrar rotas, utilizamos a função `restserver.AddRoutes`, passando um *slice* de `[]restserver.Route`. Essa instrução pode ser executada múltiplas vezes, conforme o exemplo abaixo:
+
+```go showLineNumbers
+var awesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+var moreAwesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.AddRoutes(awesomeRoutes)
+	restserver.AddRoutes(moreAwesomeRoutes)
+
+	restserver.ListenAndServe()
+}
+```
+
+### Atributos da `Route`
+
+A *struct* `Route` aceita os seguintes atributos:
+
+* **URI (Obrigatório)** Especifica o caminho ou o endpoint para a rota HTTP.
+* **Method (Obrigatório)** Especifica o método HTTP (como GET, POST) associado à rota.
+* **Prefix (Obrigatório)** Define um prefixo comum para as rotas. Aceita os valores:
+    * `PublicApi`: `/public/`
+    * `PrivateApi`: `/private/`
+    * `AuthenticatedApi`: `/api/`
+    * `NoPrefix`: `/`
+* **Function (Obrigatório)** Especifica qual função handler executar quando a rota é acessada.
+* **BeforeEnter (Não obrigatório)** É uma função executada antes de entrar na função handler da rota.
+
+### BeforeEnter
+
+Para definir uma função *middleware* que será executada antes de chamar a função *handler* da rota, basta passar uma função na definição da rota, conforme o exemplo abaixo:
+
+```go showLineNumbers
+func beforeEnterExample(ctx WebContext) *MiddlewareError {
+	// validation code, return "*MiddlewareError" for errors
+	return nil // success
+}
+
+
+var awesomeRoutes = []restserver.Route{
+    {
+        URI:    "user",
+        Method: http.MethodGet,
+        Function: func(ctx WebContext) {
+            ctx.JsonResponse(http.StatusOK, &Resp{Msg: "user get"})
+        },
+        Prefix:      AuthenticatedApi,
+        BeforeEnter: beforeEnterExample,
+    },
+}
+```
+
+## Middlewares globais
+
+Para adicionar middlewares globais, criamos uma implementação da interface abaixo e registramos a mesma na função `main` com o comando `restserver.Use(&MyCustomMiddleware{})`, onde `MyCustomMiddleware` implementa a internface `CustomMiddleware`.
+
+```go showLineNumbers
+type CustomMiddleware interface {
+	Apply(ctx WebContext) *MiddlewareError
+}
+```
+
+## Rotas autenticadas
+
+Por padrão, todas as rotas com o prefixo `AuthenticatedApi` utilizam o middleware de autenticação que valida se existe um token JWT no header `Authorization` da request.
+
+### Middleware de autenticação customizado
+
+Para substituir o middleware padrão, pode-se criar uma implementação para a interface `CustomAuthenticationMiddleware` e registrar a mesma na função `main` com a instrução `restserver.CustomAuthMiddleware(&middlewares.MyCustomAutheMiddleware{})`
+
+```go showLineNumbers
+type CustomAuthenticationMiddleware interface {
+	Apply(ctx WebContext) (*security.AuthenticationContext, error)
+}
+```
+
+___

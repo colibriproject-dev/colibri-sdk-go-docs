@@ -1,0 +1,127 @@
+---
+sidebar_position: 1
+title: Web Server
+---
+
+The `colibri-sdk-go` package provides a web server abstraction. "Under the hood", we use [Fiber](https://github.com/gofiber/fiber), but it can be easily replaced by implementing a new container in the `pkg/web/restserver` package.
+
+This creates an independent service layer. As an example, `colibri-sdk-go` originally used an implementation based on [gorilla/mux](https://github.com/gorilla/mux), which was replaced in later versions while maintaining full compatibility with existing projects.
+
+To use the server, we must configure the `PORT` environment variable (the default is `8080`).
+
+## CORS Configuration
+
+The server already includes a CORS middleware configured by default. The settings can be adjusted through the following environment variables:
+
+| Environment variable | Description | Default |
+|---|---|---|
+| `CORS_ALLOW_ORIGINS` | Allowed origins | `*` |
+| `CORS_ALLOW_METHODS` | Allowed HTTP methods | `OPTIONS, GET, POST, PUT, PATCH, DELETE` |
+| `CORS_ALLOW_HEADERS` | Headers allowed in the request | `Origin, Content-Type, Authorization, X-User-Id, X-Tenant-Id` |
+| `CORS_EXPOSE_HEADERS` | Headers exposed in the response | _(empty)_ |
+| `CORS_ALLOW_CREDENTIALS` | Allows sending credentials (cookies, auth headers) | `false` |
+| `CORS_MAX_AGE` | Time in seconds that the preflight result can be cached | `0` |
+
+After configuration, we add the `restserver.ListenAndServe()` instruction as the last line of the `main` function.
+
+```go showLineNumbers
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.ListenAndServe()
+}
+```
+
+## Routes
+
+To register routes, we use the `restserver.AddRoutes` function, passing a slice of `[]restserver.Route`. This instruction can be executed multiple times, as shown in the example below:
+
+```go showLineNumbers
+var awesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+var moreAwesomeRoutes = []restserver.Route{
+	{
+		...
+	},
+}
+
+func main() {
+	colibri.InitializeApp()
+
+	// my main code
+
+	restserver.AddRoutes(awesomeRoutes)
+	restserver.AddRoutes(moreAwesomeRoutes)
+
+	restserver.ListenAndServe()
+}
+```
+
+### `Route` Attributes
+
+The `Route` struct accepts the following attributes:
+
+* **URI (Required)** Specifies the path or endpoint for the HTTP route.
+* **Method (Required)** Specifies the HTTP method (such as GET, POST) associated with the route.
+* **Prefix (Required)** Defines a common prefix for routes. Accepts the values:
+    * `PublicApi`: `/public/`
+    * `PrivateApi`: `/private/`
+    * `AuthenticatedApi`: `/api/`
+    * `NoPrefix`: `/`
+* **Function (Required)** Specifies which handler function to execute when the route is accessed.
+* **BeforeEnter (Optional)** Is a function executed before entering the route's handler function.
+
+### BeforeEnter
+
+To define a middleware function that will be executed before calling the route's handler function, just pass a function in the route definition, as shown in the example below:
+
+```go showLineNumbers
+func beforeEnterExample(ctx WebContext) *MiddlewareError {
+	// validation code, return "*MiddlewareError" for errors
+	return nil // success
+}
+
+var awesomeRoutes = []restserver.Route{
+    {
+        URI:    "user",
+        Method: http.MethodGet,
+        Function: func(ctx WebContext) {
+            ctx.JsonResponse(http.StatusOK, &Resp{Msg: "user get"})
+        },
+        Prefix:      AuthenticatedApi,
+        BeforeEnter: beforeEnterExample,
+    },
+}
+```
+
+## Global Middlewares
+
+To add global middlewares, we create an implementation of the interface below and register it in the `main` function with the command `restserver.Use(&MyCustomMiddleware{})`, where `MyCustomMiddleware` implements the `CustomMiddleware` interface.
+
+```go showLineNumbers
+type CustomMiddleware interface {
+	Apply(ctx WebContext) *MiddlewareError
+}
+```
+
+## Authenticated Routes
+
+By default, all routes with the `AuthenticatedApi` prefix use the authentication middleware that validates if a JWT token exists in the `Authorization` header of the request.
+
+### Custom Authentication Middleware
+
+To replace the default middleware, one can create an implementation for the `CustomAuthenticationMiddleware` interface and register it in the `main` function with the `restserver.CustomAuthMiddleware(&middlewares.MyCustomAuthMiddleware{})` instruction.
+
+```go showLineNumbers
+type CustomAuthenticationMiddleware interface {
+	Apply(ctx WebContext) (*security.AuthenticationContext, error)
+}
+```
+
+---
